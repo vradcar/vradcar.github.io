@@ -1,0 +1,19 @@
+{
+  "name": "portfolio-website",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.0",
+    "@emotion/styled": "^11.11.0",
+    "@mui/material": "^5.13.0",
+    "framer-motion": "^10.12.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-intersection-observer": "^9.4.3",
+    "react-particles": "^2.9.3",
+    "react-scroll": "^1.8.9",
+    "styled-components": "^5.3.10",
+    "three": "^0.151.3",
+    "typescript": "^4.9.5"
+  }
+}
