@@ -1,7 +1,10 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Add dark theme class immediately on load
+    const navbar = document.querySelector('.navbar');
+    navbar.classList.add('dark-theme');
+
     // Update navbar background on scroll
     window.addEventListener('scroll', function() {
-        const navbar = document.querySelector('.navbar');
         if (window.scrollY > 50) {
             navbar.classList.add('scrolled');
         } else {
@@ -121,4 +124,5 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
 
