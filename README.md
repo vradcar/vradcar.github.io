@@ -1,161 +1,138 @@
-# Modern Portfolio Website
+# Varad Paradkar's Portfolio Website
 
-A professional portfolio website built with React, TypeScript, and Material-UI, featuring smooth animations, interactive elements, and a responsive design.
+A professional portfolio website showcasing my work as a Computer Science Graduate Student and Software Developer, specializing in Machine Learning, Graphics, and AR/VR development.
 
-## Technologies Used
+## 🚀 Live Demo
+[Visit Portfolio Website](#) <!-- Add your deployed website URL -->
 
-- React 18
-- TypeScript
-- Material-UI (MUI)
-- Framer Motion
-- React Particles
-- Styled Components
-- Three.js
-- Node.js/Express (for backend API)
+## 🎯 Features
 
-## 🛠️ Setup Instructions
+- **Interactive Sections**
+  - Home with particle background
+  - About with education timeline
+  - Research showcase
+  - Professional experience
+  - Project portfolio
+  - Contact information
 
-### Prerequisites
+- **Technical Highlights**
+  - Responsive design for all devices
+  - Smooth scroll animations
+  - Interactive project cards
+  - Dynamic skill category display
+  - Professional timeline layout
+  - Optimized image loading
+  - SEO optimized
 
-- Node.js (v16 or higher)
-- npm or yarn
-- Git
+## 🛠️ Technologies Used
 
-### Installation Steps
+### Frontend
+- HTML5
+- CSS3 (with modern features)
+- JavaScript (Vanilla)
+- Font Awesome Icons
+- Custom animations and transitions
 
-1. Clone the repository:
-```bash
-git clone https://github.com/yourusername/portfolio-website.git
-cd portfolio-website
-```
-
-2. Install dependencies:
-```bash
-npm install
-# or
-yarn install
-```
-
-3. Create environment variables:
-```bash
-cp .env.example .env
-```
-
-4. Start the development server:
-```bash
-npm run dev
-# or
-yarn dev
-```
-
-5. Build for production:
-```bash
-npm run build
-# or
-yarn build
-```
+### Performance
+- Image preloading
+- Lazy loading
+- Progressive Web App (PWA) support
+- Optimized assets
 
 ## 📁 Project Structure
 
 ```
 portfolio-website/
+├── index.html          # Main HTML file
+├── css/
+│   └── style.css       # Main stylesheet
+├── js/
+│   └── main.js         # JavaScript functionality
 ├── public/
-│   ├── images/
-│   └── assets/
-├── src/
-│   ├── components/
-│   │   ├── Navbar/
-│   │   ├── Hero/
-│   │   ├── About/
-│   │   ├── Research/
-│   │   ├── Experience/
-│   │   ├── Projects/
-│   │   └── Contact/
-│   ├── theme/
-│   ├── utils/
-│   ├── hooks/
-│   ├── types/
-│   └── App.tsx
-├── server/
-│   ├── routes/
-│   └── index.ts
-└── package.json
-```
-
-## 🎨 Customization
-
-1. Theme Configuration:
-   - Edit colors and typography in `src/theme/theme.ts`
-   - Modify component styles in respective component files
-
-2. Content Updates:
-   - Update personal information in `src/data/content.ts`
-   - Modify project details in `src/data/projects.ts`
-   - Update experience information in `src/data/experience.ts`
-
-3. Images and Assets:
-   - Place custom images in `public/images/`
-   - Update image references in component files
-
-## 🔧 Development Commands
-
-```bash
-# Start development server
-npm run dev
-
-# Run type checking
-npm run type-check
-
-# Run linting
-npm run lint
-
-# Run tests
-npm run test
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+│   └── images/         # Image assets
+│       ├── varad-pfp.jpg
+│       ├── hero-bg.jpg
+│       ├── about-bg.jpg
+│       ├── research-bg.jpg
+│       ├── experience-pattern.png
+│       ├── projects-pattern.png
+│       └── contact-bg.jpg
+└── manifest.json       # PWA configuration
 ```
 
 ## 📱 Responsive Design
 
-The website is fully responsive and optimized for:
 - Desktop (1200px and above)
 - Tablet (768px to 1199px)
 - Mobile (below 768px)
 
-## ✨ Features
+## 🎨 Key Sections
 
-- Interactive particle background
-- Smooth scroll animations
-- Dark mode support
-- SEO optimized
-- Contact form with validation
-- Project filtering and sorting
-- Lazy loading images
-- Progressive Web App (PWA) support
+### Home
+- Professional introduction
+- Social media links
+- Resume download
+- Particle background
 
-## 🚀 Deployment
+### About
+- Professional photo
+- Bio
+- Education timeline
+- Technical skills grid
 
-### Vercel Deployment
+### Research
+- Current research work
+- Technical expertise
+- Project highlights
+
+### Experience
+- Professional timeline
+- Company details
+- Project responsibilities
+- Tech stack used
+
+### Projects
+- Interactive project cards
+- Live demos
+- GitHub links
+- Technical details
+
+### Contact
+- Professional contact information
+- Location
+- Social media links
+- Email address
+
+## 🚀 Getting Started
+
+1. Clone the repository:
 ```bash
-npm i -g vercel
-vercel login
-vercel
+git clone https://github.com/vradcar/portfolio-website.git
 ```
 
-### Netlify Deployment
+2. Open `index.html` in your browser or use a local server:
 ```bash
-npm i -g netlify-cli
-netlify login
-netlify deploy
+# Using Python
+python -m http.server 8000
 ```
 
-## 📄 License
+## 🔧 Customization
 
-MIT License - See [LICENSE](LICENSE) for details
+1. Update personal information:
+   - Edit text content in `index.html`
+   - Replace images in `public/images/`
+   - Update contact information
+
+2. Modify styling:
+   - Edit `css/style.css` for custom styles
+   - Update animations in `js/main.js`
+
+## 📱 PWA Support
+
+- Installable on mobile devices
+- Offline support
+- Fast loading times
+- App-like experience
 
 ## 🤝 Contributing
 
@@ -164,3 +141,15 @@ MIT License - See [LICENSE](LICENSE) for details
 3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 📞 Contact
+
+Varad Paradkar - [vparadka@charlotte.edu](mailto:vparadka@charlotte.edu)
+
+Project Link: [https://github.com/vradcar/portfolio-website](https://github.com/vradcar/portfolio-website)
+
+
