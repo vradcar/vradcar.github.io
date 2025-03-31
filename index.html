@@ -11,11 +11,30 @@
     <meta name="keywords" content="software developer, machine learning, computer graphics, AR/VR, Unity3D">
     <!-- Add favicon -->
     <link rel="icon" type="image/x-icon" href="images/favicon.ico">
+    <!-- Preload critical assets -->
+    <link rel="preload" href="css/style.css" as="style">
+    <link rel="preload" href="js/main.js" as="script">
+    
+    <!-- Preload important images -->
+    <link rel="preload" href="public/images/hero-bg.jpg" as="image">
+    <link rel="preload" href="public/images/about-bg.jpg" as="image">
+    <link rel="preload" href="public/images/projects-pattern.png" as="image">
+    <link rel="preload" href="public/images/research-bg.jpg" as="image">
+    <link rel="preload" href="public/images/experience-pattern.png" as="image">
+    <link rel="preload" href="public/images/contact-bg.jpg" as="image">
+    <link rel="preload" href="public/images/varad-pfp.jpg" as="image">
+    
+    <!-- Add PWA support -->
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#ffffff">
 </head>
 <body>
     <nav class="navbar">
         <div class="nav-content">
-            <div class="logo">Varad Paradkar</div>
+            <div class="logo-container">
+                <img src="public/images/varad-pfp.jpg" alt="Varad Paradkar" class="logo-image">
+                <div class="logo">Varad Paradkar</div>
+            </div>
             <ul class="nav-links">
                 <li><a href="#home">Home</a></li>
                 <li><a href="#about">About</a></li>
@@ -40,37 +59,104 @@
     </section>
 
     <section id="about" class="about">
-        <h2>About Me</h2>
-        <div class="about-content">
-            <p>I'm a Master's student in Computer Science at UNC Charlotte, passionate about machine learning, computer graphics, and software development. With experience in both research and industry projects, I specialize in developing innovative solutions using cutting-edge technologies.</p>
+        <div class="about-container">
+            <h2 class="section-title">About Me</h2>
             
-            <div class="education">
-                <h3>Education</h3>
-                <div class="education-item">
-                    <h4>University of North Carolina at Charlotte</h4>
-                    <p>Master of Science in Computer Science</p>
-                    <p class="date">Expected May 2026</p>
+            <div class="about-grid">
+                <!-- Profile Column -->
+                <div class="profile-column">
+                    <div class="profile-card">
+                        <div class="profile-image-container">
+                            <img src="public/images/varad-pfp.jpg" alt="Varad Paradkar" class="profile-image">
+                            <div class="profile-backdrop"></div>
+                        </div>
+                        <div class="profile-info">
+                            <h3>Varad Paradkar</h3>
+                            <p class="profile-title">Computer Science Graduate Student</p>
+                            <div class="location">
+                                <i class="fas fa-map-marker-alt"></i>
+                                Charlotte, NC
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="education-item">
-                    <h4>Savitribai Phule Pune University</h4>
-                    <p>Bachelor of Engineering in Computer Engineering</p>
-                    <p class="date">June 2022</p>
+
+                <!-- Info Column -->
+                <div class="info-column">
+                    <div class="bio-card">
+                        <p class="bio-text">I'm a Master's student in Computer Science at UNC Charlotte, passionate about machine learning, computer graphics, and software development. With experience in both research and industry projects, I specialize in developing innovative solutions using cutting-edge technologies.</p>
+                    </div>
+
+                    <!-- Education Timeline -->
+                    <div class="education-timeline">
+                        <h3 class="timeline-title">Education Journey</h3>
+                        <div class="timeline-items">
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <h4>University of North Carolina at Charlotte</h4>
+                                    <p>Master of Science in Computer Science</p>
+                                    <span class="timeline-date">Expected May 2026</span>
+                                </div>
+                            </div>
+                            <div class="timeline-item">
+                                <div class="timeline-dot"></div>
+                                <div class="timeline-content">
+                                    <h4>Savitribai Phule Pune University</h4>
+                                    <p>Bachelor of Engineering in Computer Engineering</p>
+                                    <span class="timeline-date">June 2022</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <div class="skills">
-                <h3>Technical Skills</h3>
-                <div class="skill-category">
-                    <h4>Programming Languages</h4>
-                    <p>Python, C#, C++, Java, JavaScript, GLSL, Kotlin, HLSL</p>
-                </div>
-                <div class="skill-category">
-                    <h4>Frameworks & Tools</h4>
-                    <p>PyTorch, Unity3D, Unreal Engine, WebGL, Blender, PostgreSQL, MongoDB, Express, Node, React, Numpy, Pandas, Power BI, Tableau</p>
-                </div>
-                <div class="skill-category">
-                    <h4>Machine Learning</h4>
-                    <p>Neural Networks, CNNs, GNNs, RNNs, VAEs, GANs, NeRF, 3D Gaussian Splatting, Transformers</p>
+            <!-- Skills Section -->
+            <div class="skills-container">
+                <h3 class="skills-title">Technical Expertise</h3>
+                <div class="skills-grid">
+                    <div class="skill-category" data-category="languages">
+                        <div class="skill-icon">
+                            <i class="fas fa-code"></i>
+                        </div>
+                        <h4>Programming Languages</h4>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Python</span>
+                            <span class="skill-tag">C#</span>
+                            <span class="skill-tag">C++</span>
+                            <span class="skill-tag">Java</span>
+                            <span class="skill-tag">JavaScript</span>
+                            <span class="skill-tag">GLSL</span>
+                        </div>
+                    </div>
+
+                    <div class="skill-category" data-category="frameworks">
+                        <div class="skill-icon">
+                            <i class="fas fa-layer-group"></i>
+                        </div>
+                        <h4>Frameworks & Tools</h4>
+                        <div class="skill-tags">
+                            <span class="skill-tag">PyTorch</span>
+                            <span class="skill-tag">Unity3D</span>
+                            <span class="skill-tag">React</span>
+                            <span class="skill-tag">Node.js</span>
+                            <span class="skill-tag">MongoDB</span>
+                        </div>
+                    </div>
+
+                    <div class="skill-category" data-category="ml">
+                        <div class="skill-icon">
+                            <i class="fas fa-brain"></i>
+                        </div>
+                        <h4>Machine Learning</h4>
+                        <div class="skill-tags">
+                            <span class="skill-tag">Neural Networks</span>
+                            <span class="skill-tag">CNNs</span>
+                            <span class="skill-tag">GNNs</span>
+                            <span class="skill-tag">NeRF</span>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -81,13 +167,18 @@
         <div class="research-content">
             <h3>Graphic-driven Human Activity Recognition using mmWave Radar</h3>
             <p class="subtitle">Advisor: Dr. Hongfei Xue</p>
+            <div class="tech-stack">
+                <span class="tech-tag">PyTorch</span>
+                <span class="tech-tag">SMPL-X</span>
+                <span class="tech-tag">NeRF</span>
+                <span class="tech-tag">3DGS</span>
+                <span class="tech-tag">GANs</span>
+            </div>
             <div class="research-details">
-                <p>Built hybrid NeRF-3DGS pipeline with SMPL-X human models to synthesize mmWave radar datasets, achieving:</p>
                 <ul>
-                    <li>92% correlation with real 60 GHz radar signals</li>
-                    <li>18% boost in activity classification F1-score</li>
-                    <li>65% faster training convergence</li>
-                    <li>3.8× faster inference than prior SOTA methods</li>
+                    <li>Developed a 3D Gaussian Splatting pipeline with SMPL-X to synthesize mmWave radar datasets</li>
+                    <li>Built a physics-based Gaussian Splatting modeling multipath effects, achieving 92% correlation with radar signals</li>
+                    <li>Optimized NeRF with occupancy grid pruning, accelerating training by 65% and enabling 3.8× faster inference than prior SOTA methods</li>
                 </ul>
             </div>
         </div>
@@ -101,11 +192,19 @@
                 <p class="company">Montezuma AI</p>
                 <p class="date">August 2023 - May 2024</p>
                 <p class="project">PCMC Smart City Data Intelligence System</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                    <span class="tech-tag">Power BI</span>
+                    <span class="tech-tag">Tableau</span>
+                    <span class="tech-tag">Node.js</span>
+                    <span class="tech-tag">Apache Airflow</span>
+                    <span class="tech-tag">React</span>
+                </div>
                 <ul>
-                    <li>Led development of city-wide data intelligence platform</li>
-                    <li>Developed ETL pipelines processing 10TB+ of data</li>
-                    <li>Reduced manual preprocessing time by 40%</li>
-                    <li>Achieved 15% traffic reduction in pilot zones</li>
+                    <li>Designed scalable ETL pipelines to process 10TB+ of municipal data, ensuring GDPR compliance</li>
+                    <li>Automated data enrichment with REST APIs, reducing preprocessing by 40% and accelerating analytics workflow</li>
+                    <li>Built interactive dashboards increasing stakeholder engagement by 80% and enabling data-driven urban planning</li>
                 </ul>
             </div>
             <div class="experience-card">
@@ -113,46 +212,128 @@
                 <p class="company">Jnana Prabodhini</p>
                 <p class="date">June 2022 - December 2022</p>
                 <p class="project">Aranya (AR Forest Simulation) & Chemistry VR</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Unity3D</span>
+                    <span class="tech-tag">C#</span>
+                    <span class="tech-tag">ARCore</span>
+                    <span class="tech-tag">Git</span>
+                    <span class="tech-tag">Jira</span>
+                    <span class="tech-tag">Blender</span>
+                </div>
                 <ul>
-                    <li>Led development of 2 educational AR/VR apps</li>
-                    <li>Achieved 60 FPS on mid-tier Android devices</li>
-                    <li>Reduced merge conflicts by 60%</li>
-                    <li>Improved team velocity by 40%</li>
+                    <li>Led development of two AR/VR educational apps, delivering both ahead of schedule through agile sprint planning and iterative prototyping</li>
+                    <li>Architected dynamic terrain rendering and interactive AR object tracking with ARCore, optimizing shaders for 60 FPS on mid-tier Android devices</li>
+                </ul>
+            </div>
+            <div class="experience-card">
+                <h3>Software Development Intern</h3>
+                <p class="company">Jnana Prabodhini</p>
+                <p class="date">January 2019 - June 2022</p>
+                <p class="project">Megh (AR Weather Education) & Sarita (River Ecosystem Simulation)</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Unity3D</span>
+                    <span class="tech-tag">C#</span>
+                    <span class="tech-tag">Git</span>
+                    <span class="tech-tag">AR Foundation</span>
+                    <span class="tech-tag">OpenGL</span>
+                </div>
+                <ul>
+                    <li>Developed two AR educational apps (Megh, Sarita) with 50K+ downloads and a 4.5/5 rating</li>
+                    <li>Optimized AR tracking and sprite-based ecosystems, improving accuracy by 95% and performance by 40%</li>
+                    <li>Published research paper on Megh and Sarita in IJARSCT</li>
                 </ul>
             </div>
         </div>
     </section>
 
     <section id="projects" class="projects">
-        <h2>Featured Projects</h2>
+        <h2>Projects</h2>
         <div class="project-grid">
             <div class="project-card">
-                <img src="images/aranya-preview.jpg" loading="lazy" alt="Aranya Project Preview">
+                <h3>PCMC Smart City Data Intelligence System</h3>
+                <p>City-wide data platform for PCMC with scalable databases and ETL pipelines</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                    <span class="tech-tag">Airflow</span>
+                    <span class="tech-tag">Power BI</span>
+                    <span class="tech-tag">Splunk</span>
+                </div>
+                <ul class="project-highlights">
+                    <li>Led development of city-wide data platform managing 10TB+ of municipal data</li>
+                    <li>Developed anomaly detection frameworks for city-wide sensor data</li>
+                    <li>Reduced traffic by 15% in pilot zones through data-driven decisions</li>
+                </ul>
+            </div>
+
+            <div class="project-card">
                 <h3>Aranya</h3>
-                <p>An immersive AR forest simulation for middle school education, built with Unity3D and ARCore.</p>
+                <p>Immersive AR forest simulation for middle school education</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Unity3D</span>
+                    <span class="tech-tag">C#</span>
+                    <span class="tech-tag">ARCore</span>
+                </div>
+                <ul class="project-highlights">
+                    <li>Led six-person team from concept to Play Store deployment</li>
+                    <li>Achieved 60 FPS on mid-tier devices with optimized AR modules</li>
+                </ul>
                 <div class="project-links">
-                    <a href="#" target="_blank">Learn More</a>
+                    <a href="https://github.com/vradcar/aranya" target="_blank">
+                        <i class="fab fa-github"></i> View Code
+                    </a>
                 </div>
             </div>
+
             <div class="project-card">
                 <h3>Chemistry VR</h3>
-                <p>Educational VR lab experience simulating chemical reactions for interactive learning.</p>
-                <div class="project-links">
-                    <a href="#" target="_blank">Learn More</a>
+                <p>Educational VR lab experience for middle/high school students</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Unity3D</span>
+                    <span class="tech-tag">C#</span>
+                    <span class="tech-tag">Oculus VR</span>
                 </div>
+                <ul class="project-highlights">
+                    <li>Spearheaded development of immersive VR chemistry lab</li>
+                    <li>Optimized performance for Oculus VR with realistic chemical reactions</li>
+                </ul>
             </div>
+
             <div class="project-card">
                 <h3>Sarita</h3>
-                <p>Interactive river ecosystem simulation with over 50K+ downloads on Google Play Store.</p>
+                <p>Interactive river ecosystem simulation with 50K+ downloads</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Unity3D</span>
+                    <span class="tech-tag">C#</span>
+                    <span class="tech-tag">AR Foundation</span>
+                </div>
+                <ul class="project-highlights">
+                    <li>Built interactive river journey experience with mini-documentaries</li>
+                    <li>Implemented optimized particle systems for water effects</li>
+                </ul>
                 <div class="project-links">
-                    <a href="https://play.google.com/store/apps/details?id=com.JnanaPrabodhini.Sarita" target="_blank">View on Play Store</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.JnanaPrabodhini.Sarita" target="_blank">
+                        <i class="fas fa-play"></i> View on Play Store
+                    </a>
                 </div>
             </div>
+
             <div class="project-card">
                 <h3>Megh</h3>
-                <p>AR-driven educational app focusing on cloud formation and geography.</p>
+                <p>AR-driven educational app for cloud formation and geography</p>
+                <div class="tech-stack">
+                    <span class="tech-tag">Unity3D</span>
+                    <span class="tech-tag">C#</span>
+                    <span class="tech-tag">AR Foundation</span>
+                </div>
+                <ul class="project-highlights">
+                    <li>Developed AR app integrating 2D and 3D simulations</li>
+                    <li>Optimized performance for low-end devices</li>
+                </ul>
                 <div class="project-links">
-                    <a href="https://play.google.com/store/apps/details?id=com.JnanaPrabodhini.Megh" target="_blank">View on Play Store</a>
+                    <a href="https://play.google.com/store/apps/details?id=com.JnanaPrabodhini.Megh" target="_blank">
+                        <i class="fas fa-play"></i> View on Play Store
+                    </a>
                 </div>
             </div>
         </div>
@@ -176,5 +357,15 @@
     <script src="js/main.js"></script>
 </body>
 </html>
+
+
+
+
+
+
+
+
+
+
 
 

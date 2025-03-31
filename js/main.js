@@ -1,14 +1,14 @@
-// Add scroll class to navbar
+// Update navbar background on scroll
 window.addEventListener('scroll', function() {
     const navbar = document.querySelector('.navbar');
     if (window.scrollY > 50) {
-        navbar.style.background = 'rgba(255, 255, 255, 0.98)';
+        navbar.classList.add('scrolled');
     } else {
-        navbar.style.background = 'rgba(255, 255, 255, 0.95)';
+        navbar.classList.remove('scrolled');
     }
 });
 
-// Add scroll progress indicator
+// Add scroll progress indicator with dark theme colors
 const progressBar = document.createElement('div');
 progressBar.className = 'scroll-progress';
 document.body.appendChild(progressBar);
@@ -55,4 +55,69 @@ document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         });
     });
 });
+
+// Add smooth reveal animations
+const revealElements = document.querySelectorAll('.project-card, .experience-card, .skill-category');
+
+const revealOptions = {
+    threshold: 0.15,
+    rootMargin: '0px'
+};
+
+const revealCallback = (entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('revealed');
+            // Add stagger effect for child elements
+            const children = entry.target.children;
+            Array.from(children).forEach((child, index) => {
+                child.style.transitionDelay = `${index * 0.1}s`;
+                child.classList.add('revealed');
+            });
+        }
+    });
+};
+
+const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
+revealElements.forEach(element => revealObserver.observe(element));
+
+// Add animation for timeline items
+document.addEventListener('DOMContentLoaded', () => {
+    const timelineItems = document.querySelectorAll('.timeline-item');
+    
+    const timelineObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry, index) => {
+            if (entry.isIntersecting) {
+                entry.target.style.animationDelay = `${index * 0.2}s`;
+                entry.target.style.animationPlayState = 'running';
+            }
+        });
+    }, { threshold: 0.2 });
+
+    timelineItems.forEach(item => {
+        timelineObserver.observe(item);
+    });
+
+    // Add hover effect for skill categories
+    const skillCategories = document.querySelectorAll('.skill-category');
+    
+    skillCategories.forEach(category => {
+        category.addEventListener('mouseenter', () => {
+            const tags = category.querySelectorAll('.skill-tag');
+            tags.forEach((tag, index) => {
+                tag.style.transitionDelay = `${index * 0.05}s`;
+                tag.style.transform = 'scale(1.05)';
+            });
+        });
+
+        category.addEventListener('mouseleave', () => {
+            const tags = category.querySelectorAll('.skill-tag');
+            tags.forEach(tag => {
+                tag.style.transitionDelay = '0s';
+                tag.style.transform = 'scale(1)';
+            });
+        });
+    });
+});
+
 
