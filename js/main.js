@@ -7,10 +7,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function fetchGitHubProjects() {
     try {
-        // Add console log to verify function is being called
         console.log('Fetching GitHub projects...');
         
-        const username = 'vradcar'; // Make sure this is your exact GitHub username
+        const username = 'vradcar';
         const apiUrl = `https://api.github.com/users/${username}/repos`;
         
         console.log('Fetching from:', apiUrl);
@@ -24,21 +23,16 @@ async function fetchGitHubProjects() {
         const repos = await response.json();
         console.log('Fetched repos:', repos);
 
-        if (!repos || repos.length === 0) {
-            console.log('No repositories found');
-            return;
-        }
-
-        // Filter and sort repos by stars
+        // Modified filter criteria - less strict
         const filteredRepos = repos
-            .filter(repo => !repo.fork && repo.description)
+            .filter(repo => !repo.fork) // Remove fork check if you want to show forked repos
             .sort((a, b) => b.stargazers_count - a.stargazers_count)
             .slice(0, 4);
 
         console.log('Filtered repos:', filteredRepos);
 
         if (filteredRepos.length === 0) {
-            console.log('No repos match the criteria (non-fork with description)');
+            console.log('No repos match the criteria');
             return;
         }
 
@@ -46,6 +40,12 @@ async function fetchGitHubProjects() {
         if (!projectsSection) {
             console.error('Projects section not found');
             return;
+        }
+
+        // Clear existing GitHub projects if any
+        const existingGithub = projectsSection.querySelector('.github-projects');
+        if (existingGithub) {
+            existingGithub.remove();
         }
 
         // Add GitHub section title
@@ -74,11 +74,15 @@ function createGitHubProjectCard(repo) {
     const card = document.createElement('div');
     card.className = 'project-card github-card';
     
-    const techStack = [...new Set([repo.language, ...(repo.topics || [])])].filter(Boolean);
+    // Handle case where repo might not have language or topics
+    const techStack = [repo.language].filter(Boolean);
+    if (repo.topics && repo.topics.length > 0) {
+        techStack.push(...repo.topics);
+    }
 
     card.innerHTML = `
         <h3>${repo.name}</h3>
-        <p>${repo.description}</p>
+        <p>${repo.description || 'No description available'}</p>
         <div class="tech-stack">
             ${techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
         </div>
@@ -106,6 +110,7 @@ document.addEventListener('DOMContentLoaded', () => {
     console.log('DOM loaded, fetching GitHub projects...');
     fetchGitHubProjects();
 });
+
 
 
 
