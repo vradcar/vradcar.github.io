@@ -190,10 +190,23 @@ async function fetchGitHubProjects() {
         }
 
         const repos = await response.json();
+        console.log('Fetched repos:', repos); // Debug log to see what we're getting
+
         const filteredRepos = repos
-            .filter(repo => !repo.fork && repo.description)
-            .sort((a, b) => b.stargazers_count - a.stargazers_count)
+            .filter(repo => {
+                // Less strict filtering
+                return !repo.fork || repo.stargazers_count > 0 || repo.description;
+            })
+            .sort((a, b) => {
+                // Sort by multiple criteria
+                if (b.stargazers_count !== a.stargazers_count) {
+                    return b.stargazers_count - a.stargazers_count;
+                }
+                return b.updated_at.localeCompare(a.updated_at);
+            })
             .slice(0, 4);
+
+        console.log('Filtered repos:', filteredRepos); // Debug log to see filtered results
 
         if (filteredRepos.length === 0) {
             console.log('No matching GitHub projects found');
@@ -225,7 +238,7 @@ async function fetchGitHubProjects() {
         projectsContainer.parentElement.insertBefore(githubContainer, githubTitle.nextSibling);
 
     } catch (error) {
-        console.log('Error fetching GitHub projects, skipping GitHub section:', error);
+        console.error('Error fetching GitHub projects:', error);
     }
 }
 
@@ -261,6 +274,7 @@ function createGitHubProjectCard(repo) {
     
     return card;
 }
+
 
 
 
