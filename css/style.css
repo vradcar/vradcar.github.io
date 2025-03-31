@@ -351,11 +351,13 @@ footer {
     .nav-links {
         position: fixed;
         inset: 0;
-        background: rgba(18, 18, 18, 0.98);
-        display: flex;
+        background: rgba(18, 18, 18, 0.95);
+        backdrop-filter: blur(10px);
+        z-index: 999;
         flex-direction: column;
-        justify-content: center;
         align-items: center;
+        justify-content: center;
+        gap: 2rem;
         transform: translateX(100%);
         transition: transform 0.3s ease;
     }
@@ -366,6 +368,14 @@ footer {
 
     .nav-links li {
         margin: 1rem 0;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all 0.3s ease;
+    }
+
+    .nav-links.active li {
+        opacity: 1;
+        transform: translateX(0);
     }
 
     .menu-toggle {
@@ -376,10 +386,20 @@ footer {
         font-size: 1.5rem;
         cursor: pointer;
         padding: 0.5rem;
+        z-index: 1000;
+        position: relative;
     }
 
     .menu-toggle:hover {
         color: var(--dark-primary);
+    }
+
+    .menu-toggle i {
+        transition: transform 0.3s ease;
+    }
+
+    .nav-links.active ~ .menu-toggle i {
+        transform: rotate(90deg);
     }
 }
 
@@ -1214,11 +1234,47 @@ footer {
         align-items: center;
         justify-content: center;
         gap: 2rem;
-        transform: translateY(-100%);
+        transform: translateX(100%);
         transition: transform 0.3s ease;
     }
 
     .nav-links.active {
-        transform: translateY(0);
+        transform: translateX(0);
+    }
+
+    .nav-links li {
+        margin: 1rem 0;
+        opacity: 0;
+        transform: translateX(20px);
+        transition: all 0.3s ease;
+    }
+
+    .nav-links.active li {
+        opacity: 1;
+        transform: translateX(0);
+    }
+
+    .menu-toggle {
+        display: block;
+        background: none;
+        border: none;
+        color: var(--dark-text);
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 0.5rem;
+        z-index: 1000;
+        position: relative;
+    }
+
+    .menu-toggle:hover {
+        color: var(--dark-primary);
+    }
+
+    .menu-toggle i {
+        transition: transform 0.3s ease;
+    }
+
+    .nav-links.active ~ .menu-toggle i {
+        transform: rotate(90deg);
     }
 }

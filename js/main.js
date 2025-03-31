@@ -37,10 +37,49 @@ document.addEventListener('DOMContentLoaded', function() {
     const menuButton = document.createElement('button');
     menuButton.className = 'menu-toggle';
     menuButton.innerHTML = '<i class="fas fa-bars"></i>';
-    document.querySelector('.nav-content').prepend(menuButton);
+    document.querySelector('.nav-content').appendChild(menuButton);
 
+    const navLinks = document.querySelector('.nav-links');
+    
+    // Toggle menu
     menuButton.addEventListener('click', () => {
-        document.querySelector('.nav-links').classList.toggle('active');
+        navLinks.classList.toggle('active');
+        // Toggle menu icon
+        const icon = menuButton.querySelector('i');
+        icon.classList.toggle('fa-bars');
+        icon.classList.toggle('fa-times');
+    });
+
+    // Close menu when clicking a link
+    navLinks.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', () => {
+            navLinks.classList.remove('active');
+            const icon = menuButton.querySelector('i');
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+        });
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.nav-links') && 
+            !e.target.closest('.menu-toggle') && 
+            navLinks.classList.contains('active')) {
+            navLinks.classList.remove('active');
+            const icon = menuButton.querySelector('i');
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+        }
+    });
+
+    // Prevent menu from staying open on window resize
+    window.addEventListener('resize', () => {
+        if (window.innerWidth > 768 && navLinks.classList.contains('active')) {
+            navLinks.classList.remove('active');
+            const icon = menuButton.querySelector('i');
+            icon.classList.add('fa-bars');
+            icon.classList.remove('fa-times');
+        }
     });
 
     // Intersection Observer for section animations
@@ -135,78 +174,79 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Add this function to fetch GitHub repos
-    async function fetchGitHubProjects() {
-        try {
-            const username = 'vradcar'; // Your GitHub username
-            const response = await fetch(`https://api.github.com/users/${username}/repos`);
-            const repos = await response.json();
-
-            // Filter and sort repos by stars
-            const filteredRepos = repos
-                .filter(repo => !repo.fork && repo.description) // Only show non-forks with descriptions
-                .sort((a, b) => b.stargazers_count - a.stargazers_count)
-                .slice(0, 4); // Show top 4 repos
-
-            const projectsContainer = document.querySelector('.project-grid');
-            
-            // Add a section title for GitHub projects
-            const githubTitle = document.createElement('h2');
-            githubTitle.className = 'github-projects-title';
-            githubTitle.textContent = 'Featured GitHub Projects';
-            projectsContainer.parentElement.insertBefore(githubTitle, projectsContainer.nextSibling);
-
-            // Create a new container for GitHub projects
-            const githubContainer = document.createElement('div');
-            githubContainer.className = 'project-grid github-projects';
-            
-            filteredRepos.forEach(repo => {
-                const card = createGitHubProjectCard(repo);
-                githubContainer.appendChild(card);
-            });
-
-            // Add the GitHub projects after the existing projects
-            projectsContainer.parentElement.insertBefore(githubContainer, projectsContainer.nextSibling);
-        } catch (error) {
-            console.error('Error fetching GitHub projects:', error);
-        }
-    }
-
-    // Helper function to create GitHub project cards
-    function createGitHubProjectCard(repo) {
-        const card = document.createElement('div');
-        card.className = 'project-card github-card';
-        
-        // Convert topics/languages to tech stack
-        const techStack = repo.topics || [];
-        if (repo.language) techStack.unshift(repo.language);
-
-        card.innerHTML = `
-            <h3>${repo.name}</h3>
-            <p>${repo.description}</p>
-            <div class="tech-stack">
-                ${techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
-            </div>
-            <div class="project-stats">
-                <span><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
-                <span><i class="fas fa-code-branch"></i> ${repo.forks_count}</span>
-            </div>
-            <div class="project-links">
-                <a href="${repo.html_url}" target="_blank">
-                    <i class="fab fa-github"></i> View Code
-                </a>
-                ${repo.homepage ? `
-                    <a href="${repo.homepage}" target="_blank">
-                        <i class="fas fa-external-link-alt"></i> Live Demo
-                    </a>
-                ` : ''}
-            </div>
-        `;
-        
-        return card;
-    }
-
-    // Call this function when the DOM is loaded
+    // Call fetchGitHubProjects when the DOM is loaded
     fetchGitHubProjects();
 });
+
+// Move these functions outside of any event listener
+async function fetchGitHubProjects() {
+    try {
+        const username = 'vradcar'; // Your GitHub username
+        const response = await fetch(`https://api.github.com/users/${username}/repos`);
+        const repos = await response.json();
+
+        // Filter and sort repos by stars
+        const filteredRepos = repos
+            .filter(repo => !repo.fork && repo.description) // Only show non-forks with descriptions
+            .sort((a, b) => b.stargazers_count - a.stargazers_count)
+            .slice(0, 4); // Show top 4 repos
+
+        const projectsContainer = document.querySelector('.project-grid');
+        
+        // Add a section title for GitHub projects
+        const githubTitle = document.createElement('h2');
+        githubTitle.className = 'github-projects-title';
+        githubTitle.textContent = 'Featured GitHub Projects';
+        projectsContainer.parentElement.insertBefore(githubTitle, projectsContainer.nextSibling);
+
+        // Create a new container for GitHub projects
+        const githubContainer = document.createElement('div');
+        githubContainer.className = 'project-grid github-projects';
+        
+        filteredRepos.forEach(repo => {
+            const card = createGitHubProjectCard(repo);
+            githubContainer.appendChild(card);
+        });
+
+        // Add the GitHub projects after the existing projects
+        projectsContainer.parentElement.insertBefore(githubContainer, projectsContainer.nextSibling);
+    } catch (error) {
+        console.error('Error fetching GitHub projects:', error);
+    }
+}
+
+function createGitHubProjectCard(repo) {
+    const card = document.createElement('div');
+    card.className = 'project-card github-card';
+    
+    // Convert topics/languages to tech stack
+    const techStack = repo.topics || [];
+    if (repo.language) techStack.unshift(repo.language);
+
+    card.innerHTML = `
+        <h3>${repo.name}</h3>
+        <p>${repo.description}</p>
+        <div class="tech-stack">
+            ${techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+        </div>
+        <div class="project-stats">
+            <span><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
+            <span><i class="fas fa-code-branch"></i> ${repo.forks_count}</span>
+        </div>
+        <div class="project-links">
+            <a href="${repo.html_url}" target="_blank">
+                <i class="fab fa-github"></i> View Code
+            </a>
+            ${repo.homepage ? `
+                <a href="${repo.homepage}" target="_blank">
+                    <i class="fas fa-external-link-alt"></i> Live Demo
+                </a>
+            ` : ''}
+        </div>
+    `;
+    
+    return card;
+}
+
+
 
