@@ -3,7 +3,7 @@
 A professional portfolio website showcasing my work as a Computer Science Graduate Student and Software Developer, specializing in Machine Learning, Graphics, and AR/VR development.
 
 ## 🚀 Live Demo
-[Visit Portfolio Website](#) <!-- Add your deployed website URL -->
+[Visit Portfolio Website](https://vradcar.github.io/portfolio-website)
 
 ## 🎯 Features
 
@@ -151,5 +151,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 Varad Paradkar - [vparadka@charlotte.edu](mailto:vparadka@charlotte.edu)
 
 Project Link: [https://github.com/vradcar/portfolio-website](https://github.com/vradcar/portfolio-website)
+
 
 
