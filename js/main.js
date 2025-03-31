@@ -182,45 +182,61 @@ document.addEventListener('DOMContentLoaded', function() {
 async function fetchGitHubProjects() {
     try {
         const username = 'vradcar';
-        const response = await fetch(`https://api.github.com/users/${username}/repos`);
+        // Add headers for better rate limits and debugging
+        const headers = {
+            'Accept': 'application/vnd.github.v3+json',
+            // If you add a token later, you would include it here:
+            // 'Authorization': `token ${YOUR_TOKEN}`
+        };
         
+        const response = await fetch(`https://api.github.com/users/${username}/repos`, {
+            headers: headers
+        });
+        
+        // Log rate limit information
+        console.log('Rate limit:', {
+            remaining: response.headers.get('X-RateLimit-Remaining'),
+            limit: response.headers.get('X-RateLimit-Limit'),
+            reset: new Date(response.headers.get('X-RateLimit-Reset') * 1000)
+        });
+
         if (!response.ok) {
-            console.log('GitHub API request failed, skipping GitHub projects section');
-            return;
+            throw new Error(`GitHub API returned ${response.status}: ${response.statusText}`);
         }
 
         const repos = await response.json();
-        console.log('Fetched repos:', repos); // Debug log to see what we're getting
+        console.log(`Fetched ${repos.length} repos`);
 
         const filteredRepos = repos
             .filter(repo => {
-                // Less strict filtering
-                return !repo.fork || repo.stargazers_count > 0 || repo.description;
+                // Even less strict filtering
+                return true; // Show all repos initially
             })
             .sort((a, b) => {
-                // Sort by multiple criteria
-                if (b.stargazers_count !== a.stargazers_count) {
-                    return b.stargazers_count - a.stargazers_count;
-                }
-                return b.updated_at.localeCompare(a.updated_at);
+                // Prioritize non-forks and repos with descriptions
+                const aScore = (!a.fork ? 2 : 0) + (a.description ? 1 : 0) + a.stargazers_count;
+                const bScore = (!b.fork ? 2 : 0) + (b.description ? 1 : 0) + b.stargazers_count;
+                return bScore - aScore;
             })
             .slice(0, 4);
 
-        console.log('Filtered repos:', filteredRepos); // Debug log to see filtered results
+        console.log(`Filtered to ${filteredRepos.length} repos`);
 
         if (filteredRepos.length === 0) {
-            console.log('No matching GitHub projects found');
-            return;
+            throw new Error('No matching GitHub projects found');
         }
 
-        // Find the existing project grid
         const projectsContainer = document.querySelector('.project-grid');
         if (!projectsContainer) {
-            console.log('Project grid not found');
-            return;
+            throw new Error('Project grid not found');
         }
 
-        // Create GitHub section
+        // Remove existing GitHub section if it exists
+        const existingGithubSection = document.querySelector('.github-projects');
+        if (existingGithubSection) {
+            existingGithubSection.remove();
+        }
+
         const githubTitle = document.createElement('h2');
         githubTitle.className = 'github-projects-title';
         githubTitle.textContent = 'Featured GitHub Projects';
@@ -233,12 +249,13 @@ async function fetchGitHubProjects() {
             githubContainer.appendChild(card);
         });
 
-        // Insert after the existing projects
         projectsContainer.parentElement.insertBefore(githubTitle, projectsContainer.nextSibling);
         projectsContainer.parentElement.insertBefore(githubContainer, githubTitle.nextSibling);
 
     } catch (error) {
-        console.error('Error fetching GitHub projects:', error);
+        console.error('GitHub projects error:', error.message);
+        // Optionally, you could add a fallback here:
+        // addFallbackProjects();
     }
 }
 
@@ -275,7 +292,31 @@ function createGitHubProjectCard(repo) {
     return card;
 }
 
+// Optional: Add this function to show fallback projects when API fails
+function addFallbackProjects() {
+    const projectsContainer = document.querySelector('.project-grid');
+    if (!projectsContainer) return;
 
+    const fallbackProjects = [
+        {
+            name: "Portfolio Website",
+            description: "Personal portfolio website built with modern web technologies",
+            language: "JavaScript",
+            topics: ["HTML", "CSS", "JavaScript"],
+            html_url: "https://github.com/vradcar/vradcar.github.io"
+        }
+        // Add more fallback projects as needed
+    ];
 
+    const githubContainer = document.createElement('div');
+    githubContainer.className = 'project-grid github-projects';
+    
+    fallbackProjects.forEach(repo => {
+        const card = createGitHubProjectCard(repo);
+        githubContainer.appendChild(card);
+    });
+
+    projectsContainer.parentElement.appendChild(githubContainer);
+}
 
 
