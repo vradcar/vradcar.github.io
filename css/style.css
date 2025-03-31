@@ -26,38 +26,59 @@ body {
 }
 
 /* Navbar specific dark styles */
+.navbar,
+.navbar.scrolled,
+.navbar.dark-theme,
+.navbar:not(.scrolled),
+.navbar * {
+    background: none;
+    background-color: none;
+}
+
+/* Apply new forced dark styles */
 .navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
+    width: 100%;
     padding: 1rem 2rem;
-    background-color: rgba(18, 18, 18, 0.95) !important;
+    background-color: var(--dark-bg) !important;
     -webkit-backdrop-filter: blur(10px);
     backdrop-filter: blur(10px);
     z-index: 1000;
-    transition: all 0.3s ease;
+    transition: background-color 0.3s ease;
     border-bottom: 1px solid var(--dark-border);
 }
 
-/* Override any potential theme switches */
-.navbar, 
-.navbar.scrolled, 
-.navbar.dark-theme {
+/* Force dark background in all states */
+.navbar::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background-color: rgba(18, 18, 18, 0.95) !important;
-    color: var(--dark-text) !important;
+    z-index: -1;
 }
 
-/* Ensure all navbar elements stay in dark theme */
+/* Force text colors */
+.navbar,
 .navbar *,
-.navbar.scrolled *,
-.navbar.dark-theme * {
+.logo,
+.nav-links a {
     color: var(--dark-text) !important;
 }
 
-.navbar.scrolled {
+/* Hover states */
+.nav-links a:hover {
+    color: var(--dark-primary) !important;
+}
+
+/* Scrolled state */
+.navbar.scrolled::before {
     background-color: rgba(18, 18, 18, 0.98) !important;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .nav-content {
@@ -992,48 +1013,63 @@ section.visible {
 }
 
 /* GitHub Projects Section */
+.github-projects {
+    margin-top: 2rem;
+}
+
 .github-projects-title {
     margin-top: 4rem;
     margin-bottom: 2rem;
     color: var(--dark-primary);
+    text-align: center;
 }
 
 .github-card {
+    position: relative;
     border-left: 4px solid var(--dark-primary);
 }
 
-.tech-stack {
-    margin: 1rem 0;
+.project-stats {
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
+    gap: 1rem;
+    margin: 1rem 0;
+    color: var(--dark-text-secondary);
 }
 
-.tech-tag {
-    background: var(--dark-surface-2);
-    color: var(--dark-primary);
-    padding: 0.25rem 0.75rem;
-    border-radius: 15px;
-    font-size: 0.85rem;
-    border: 1px solid var(--dark-border);
-}
-
-.github-card .project-links a {
+.project-stats span {
     display: flex;
     align-items: center;
     gap: 0.5rem;
+}
+
+.github-card .project-links {
+    margin-top: 1.5rem;
+}
+
+.github-card .project-links a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    background: var(--dark-surface-2);
     color: var(--dark-primary);
     text-decoration: none;
     transition: all 0.3s ease;
 }
 
 .github-card .project-links a:hover {
-    color: var(--dark-primary-hover);
-    transform: translateX(5px);
+    transform: translateY(-2px);
+    background: var(--dark-surface);
 }
 
-.github-card .fab {
-    font-size: 1.2rem;
+.github-card .tech-stack {
+    margin: 1rem 0;
+}
+
+.github-card .tech-tag {
+    background: var(--dark-surface-2);
+    color: var(--dark-primary);
 }
 
 /* Project Cards Styling */

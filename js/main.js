@@ -1,13 +1,24 @@
-document.addEventListener('DOMContentLoaded', function() {
-    // Add dark theme class immediately on load
+// Force dark theme immediately when script loads
+(function() {
     const navbar = document.querySelector('.navbar');
-    navbar.classList.add('dark-theme');
+    if (navbar) {
+        navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
+    }
+})();
 
-    // Update navbar background on scroll
+document.addEventListener('DOMContentLoaded', function() {
+    const navbar = document.querySelector('.navbar');
+    
+    // Force dark theme
+    navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
+    
+    // Handle scroll
     window.addEventListener('scroll', function() {
         if (window.scrollY > 50) {
+            navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.98)';
             navbar.classList.add('scrolled');
         } else {
+            navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
             navbar.classList.remove('scrolled');
         }
     });
@@ -123,6 +134,79 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         });
     });
-});
 
+    // Add this function to fetch GitHub repos
+    async function fetchGitHubProjects() {
+        try {
+            const username = 'vradcar'; // Your GitHub username
+            const response = await fetch(`https://api.github.com/users/${username}/repos`);
+            const repos = await response.json();
+
+            // Filter and sort repos by stars
+            const filteredRepos = repos
+                .filter(repo => !repo.fork && repo.description) // Only show non-forks with descriptions
+                .sort((a, b) => b.stargazers_count - a.stargazers_count)
+                .slice(0, 4); // Show top 4 repos
+
+            const projectsContainer = document.querySelector('.project-grid');
+            
+            // Add a section title for GitHub projects
+            const githubTitle = document.createElement('h2');
+            githubTitle.className = 'github-projects-title';
+            githubTitle.textContent = 'Featured GitHub Projects';
+            projectsContainer.parentElement.insertBefore(githubTitle, projectsContainer.nextSibling);
+
+            // Create a new container for GitHub projects
+            const githubContainer = document.createElement('div');
+            githubContainer.className = 'project-grid github-projects';
+            
+            filteredRepos.forEach(repo => {
+                const card = createGitHubProjectCard(repo);
+                githubContainer.appendChild(card);
+            });
+
+            // Add the GitHub projects after the existing projects
+            projectsContainer.parentElement.insertBefore(githubContainer, projectsContainer.nextSibling);
+        } catch (error) {
+            console.error('Error fetching GitHub projects:', error);
+        }
+    }
+
+    // Helper function to create GitHub project cards
+    function createGitHubProjectCard(repo) {
+        const card = document.createElement('div');
+        card.className = 'project-card github-card';
+        
+        // Convert topics/languages to tech stack
+        const techStack = repo.topics || [];
+        if (repo.language) techStack.unshift(repo.language);
+
+        card.innerHTML = `
+            <h3>${repo.name}</h3>
+            <p>${repo.description}</p>
+            <div class="tech-stack">
+                ${techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
+            </div>
+            <div class="project-stats">
+                <span><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
+                <span><i class="fas fa-code-branch"></i> ${repo.forks_count}</span>
+            </div>
+            <div class="project-links">
+                <a href="${repo.html_url}" target="_blank">
+                    <i class="fab fa-github"></i> View Code
+                </a>
+                ${repo.homepage ? `
+                    <a href="${repo.homepage}" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> Live Demo
+                    </a>
+                ` : ''}
+            </div>
+        `;
+        
+        return card;
+    }
+
+    // Call this function when the DOM is loaded
+    fetchGitHubProjects();
+});
 
