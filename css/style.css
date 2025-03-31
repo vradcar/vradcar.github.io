@@ -1038,32 +1038,33 @@ section.visible {
 }
 
 .github-projects-title {
-    margin-top: 4rem;
-    margin-bottom: 2rem;
-    color: var(--dark-primary);
+    margin: 2rem 0 1rem;
+    color: var(--dark-text);
     text-align: center;
 }
 
 .github-card {
-    position: relative;
-    border-left: 4px solid var(--dark-primary);
+    background: var(--dark-surface);
+    border: 1px solid var(--dark-border);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-.project-stats {
+.github-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.github-card .project-stats {
+    margin: 1rem 0;
     display: flex;
     gap: 1rem;
-    margin: 1rem 0;
     color: var(--dark-text-secondary);
 }
 
-.project-stats span {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
 .github-card .project-links {
-    margin-top: 1.5rem;
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
 }
 
 .github-card .project-links a {
@@ -1079,8 +1080,8 @@ section.visible {
 }
 
 .github-card .project-links a:hover {
-    transform: translateY(-2px);
-    background: var(--dark-surface);
+    background: var(--dark-primary);
+    color: var(--dark-surface);
 }
 
 .github-card .tech-stack {
