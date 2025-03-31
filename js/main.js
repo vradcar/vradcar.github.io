@@ -41,13 +41,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
     const navLinks = document.querySelector('.nav-links');
     
+    // Add animation delay to nav items
+    const navItems = navLinks.querySelectorAll('li');
+    navItems.forEach((item, index) => {
+        item.style.transitionDelay = `${index * 0.1}s`;
+    });
+
     // Toggle menu
-    menuButton.addEventListener('click', () => {
+    menuButton.addEventListener('click', (e) => {
+        e.stopPropagation();
         navLinks.classList.toggle('active');
-        // Toggle menu icon
         const icon = menuButton.querySelector('i');
         icon.classList.toggle('fa-bars');
         icon.classList.toggle('fa-times');
+        
+        // Toggle body scroll
+        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
     });
 
     // Close menu when clicking a link
@@ -57,6 +66,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const icon = menuButton.querySelector('i');
             icon.classList.add('fa-bars');
             icon.classList.remove('fa-times');
+            document.body.style.overflow = '';
         });
     });
 
@@ -69,6 +79,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const icon = menuButton.querySelector('i');
             icon.classList.add('fa-bars');
             icon.classList.remove('fa-times');
+            document.body.style.overflow = '';
         }
     });
 
@@ -182,45 +193,24 @@ document.addEventListener('DOMContentLoaded', function() {
 async function fetchGitHubProjects() {
     try {
         const username = 'vradcar';
-        // Add headers for better rate limits and debugging
         const headers = {
             'Accept': 'application/vnd.github.v3+json',
-            // If you add a token later, you would include it here:
-            // 'Authorization': `token ${YOUR_TOKEN}`
         };
         
         const response = await fetch(`https://api.github.com/users/${username}/repos`, {
             headers: headers
         });
         
-        // Log rate limit information
-        console.log('Rate limit:', {
-            remaining: response.headers.get('X-RateLimit-Remaining'),
-            limit: response.headers.get('X-RateLimit-Limit'),
-            reset: new Date(response.headers.get('X-RateLimit-Reset') * 1000)
-        });
-
         if (!response.ok) {
             throw new Error(`GitHub API returned ${response.status}: ${response.statusText}`);
         }
 
         const repos = await response.json();
-        console.log(`Fetched ${repos.length} repos`);
-
+        
+        // Sort all repos by latest update
         const filteredRepos = repos
-            .filter(repo => {
-                // Even less strict filtering
-                return true; // Show all repos initially
-            })
-            .sort((a, b) => {
-                // Prioritize non-forks and repos with descriptions
-                const aScore = (!a.fork ? 2 : 0) + (a.description ? 1 : 0) + a.stargazers_count;
-                const bScore = (!b.fork ? 2 : 0) + (b.description ? 1 : 0) + b.stargazers_count;
-                return bScore - aScore;
-            })
-            .slice(0, 4);
-
-        console.log(`Filtered to ${filteredRepos.length} repos`);
+            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
+            .slice(0, 6); // Show latest 6 repos
 
         if (filteredRepos.length === 0) {
             throw new Error('No matching GitHub projects found');
@@ -232,14 +222,18 @@ async function fetchGitHubProjects() {
         }
 
         // Remove existing GitHub section if it exists
-        const existingGithubSection = document.querySelector('.github-projects');
+        const existingGithubSection = document.querySelector('.github-projects-section');
         if (existingGithubSection) {
             existingGithubSection.remove();
         }
 
+        // Create container for GitHub section
+        const githubSection = document.createElement('div');
+        githubSection.className = 'github-projects-section';
+
         const githubTitle = document.createElement('h2');
         githubTitle.className = 'github-projects-title';
-        githubTitle.textContent = 'Featured GitHub Projects';
+        githubTitle.textContent = 'Latest GitHub Projects';
 
         const githubContainer = document.createElement('div');
         githubContainer.className = 'project-grid github-projects';
@@ -249,13 +243,25 @@ async function fetchGitHubProjects() {
             githubContainer.appendChild(card);
         });
 
-        projectsContainer.parentElement.insertBefore(githubTitle, projectsContainer.nextSibling);
-        projectsContainer.parentElement.insertBefore(githubContainer, githubTitle.nextSibling);
+        // Create button container for centering
+        const buttonContainer = document.createElement('div');
+        buttonContainer.className = 'view-all-button-container';
+
+        const viewAllButton = document.createElement('a');
+        viewAllButton.href = `https://github.com/${username}?tab=repositories`;
+        viewAllButton.target = '_blank';
+        viewAllButton.className = 'view-all-button';
+        viewAllButton.textContent = 'View All Projects';
+
+        buttonContainer.appendChild(viewAllButton);
+
+        githubSection.appendChild(githubTitle);
+        githubSection.appendChild(githubContainer);
+        githubSection.appendChild(buttonContainer);
+        projectsContainer.parentElement.insertBefore(githubSection, projectsContainer.nextSibling);
 
     } catch (error) {
         console.error('GitHub projects error:', error.message);
-        // Optionally, you could add a fallback here:
-        // addFallbackProjects();
     }
 }
 
@@ -267,9 +273,12 @@ function createGitHubProjectCard(repo) {
     const techStack = repo.topics || [];
     if (repo.language) techStack.unshift(repo.language);
 
+    // Use a default description if none is provided
+    const description = repo.description || 'No description available';
+
     card.innerHTML = `
         <h3>${repo.name}</h3>
-        <p>${repo.description}</p>
+        <p>${description}</p>
         <div class="tech-stack">
             ${techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
         </div>
@@ -318,5 +327,9 @@ function addFallbackProjects() {
 
     projectsContainer.parentElement.appendChild(githubContainer);
 }
+
+
+
+
 
 
