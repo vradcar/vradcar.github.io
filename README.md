@@ -1,157 +1,78 @@
-# Varad Paradkar's Portfolio Website
+# Varad Paradkar — Portfolio
 
-A professional portfolio website showcasing my work as a Computer Science Graduate Student and Software Developer, specializing in Machine Learning, Graphics, and AR/VR development.
+Personal site for [Varad Paradkar](https://www.linkedin.com/in/vparadkar), a software engineer
+working on real-time, data-intensive web applications — React front ends, RESTful APIs, and the
+streaming pipelines behind them.
 
-## 🚀 Live Demo
-[Visit Portfolio Website](https://vradcar.github.io)
+**Live:** <https://vradcar.github.io/>
 
-## 🎯 Features
+## Stack
 
-- **Interactive Sections**
-  - Home with particle background
-  - About with education timeline
-  - Research showcase
-  - Professional experience
-  - Project portfolio
-  - Contact information
+Hand-written HTML, CSS, and JavaScript. No framework, no bundler, no build step — the repository
+is what GitHub Pages serves.
 
-- **Technical Highlights**
-  - Responsive design for all devices
-  - Smooth scroll animations
-  - Interactive project cards
-  - Dynamic skill category display
-  - Professional timeline layout
-  - Optimized image loading
-  - SEO optimized
+- **One stylesheet**, token driven. Dark and light themes are two full declarations of the same
+  custom properties, so neither is a patch over the other.
+- **Inline SVG sprite** for icons instead of an icon font, which removes a render-blocking
+  external stylesheet.
+- **No images in the layout** beyond the portrait; section backdrops are CSS gradients and masks.
+- **Progressive enhancement**: with JavaScript blocked the page is still complete and readable.
+  Scroll reveals are gated behind a `.js` class, and the GitHub section stays hidden unless its
+  request succeeds.
 
-## 🛠️ Technologies Used
-
-### Frontend
-- HTML5
-- CSS3 (with modern features)
-- JavaScript (Vanilla)
-- Font Awesome Icons
-- Custom animations and transitions
-
-### Performance
-- Image preloading
-- Lazy loading
-- Progressive Web App (PWA) support
-- Optimized assets
-
-## 📁 Project Structure
+## Structure
 
 ```
-portfolio-website/
-├── index.html          # Main HTML file
-├── css/
-│   └── style.css       # Main stylesheet
-├── js/
-│   └── main.js         # JavaScript functionality
-├── public/
-│   └── images/         # Image assets
-│       ├── varad-pfp.jpg
-│       ├── hero-bg.jpg
-│       ├── about-bg.jpg
-│       ├── research-bg.jpg
-│       ├── experience-pattern.png
-│       ├── projects-pattern.png
-│       └── contact-bg.jpg
-└── manifest.json       # PWA configuration
+.
+├── index.html        # All content and the icon sprite
+├── css/style.css     # Tokens, layout, components, responsive rules
+├── js/main.js        # Theme, nav, scrollspy, reveals, GitHub fetch
+├── resume.pdf        # Linked from the header and hero
+├── public/images/
+│   └── varad-pfp.jpg # Portrait, also used as the Open Graph image
+└── package.json      # Metadata and a local-server script only; no dependencies
 ```
 
-## 📱 Responsive Design
+## Running locally
 
-- Desktop (1200px and above)
-- Tablet (768px to 1199px)
-- Mobile (below 768px)
+Any static server works, since there is nothing to compile:
 
-## 🎨 Key Sections
-
-### Home
-- Professional introduction
-- Social media links
-- Resume download
-- Particle background
-
-### About
-- Professional photo
-- Bio
-- Education timeline
-- Technical skills grid
-
-### Research
-- Current research work
-- Technical expertise
-- Project highlights
-
-### Experience
-- Professional timeline
-- Company details
-- Project responsibilities
-- Tech stack used
-
-### Projects
-- Interactive project cards
-- Live demos
-- GitHub links
-- Technical details
-
-### Contact
-- Professional contact information
-- Location
-- Social media links
-- Email address
-
-## 🚀 Getting Started
-
-1. Clone the repository:
 ```bash
-git clone https://github.com/vradcar/portfolio-website.git
+npm start                  # → http://localhost:8000
+python -m http.server 8000 # no Node required
 ```
 
-2. Open `index.html` in your browser or use a local server:
-```bash
-# Using Python
-python -m http.server 8000
-```
+## Behaviour worth knowing
 
-## 🔧 Customization
+**Theme.** An inline script in `<head>` stamps `data-theme` on `<html>` before first paint, so the
+chosen theme never flashes. It follows the operating system until the visitor clicks the toggle;
+after that their choice is kept in `localStorage`. Every read and write is wrapped in `try`/`catch`
+because storage throws in private windows.
 
-1. Update personal information:
-   - Edit text content in `index.html`
-   - Replace images in `public/images/`
-   - Update contact information
+**GitHub section.** `js/main.js` pulls the six most recently pushed repositories from the public
+GitHub API, skipping forks, archived repositories, and the ones already described by hand on the
+page (`GH_SKIP`). Results are cached in `localStorage` for six hours, which keeps repeat visits off
+the API's 60-requests-per-hour unauthenticated limit. Cards are built with `createElement` and
+`textContent` rather than `innerHTML`, so repository descriptions can't inject markup. If the
+request fails for any reason the section simply stays hidden.
 
-2. Modify styling:
-   - Edit `css/style.css` for custom styles
-   - Update animations in `js/main.js`
+**Accessibility.** Skip link, a real focus-visible ring, `aria-expanded` on the menu button,
+`aria-current` driven by a scroll observer, labelled icon-only links, and a
+`prefers-reduced-motion` block that disables reveals and smooth scrolling.
 
-## 📱 PWA Support
+## Updating content
 
-- Installable on mobile devices
-- Offline support
-- Fast loading times
-- App-like experience
+Everything is in `index.html`, in section order: hero, about, experience, projects, research,
+contact. Each is plain markup — editing a bullet means editing a `<li>`.
 
-## 🤝 Contributing
+- **Experience and projects** use the same `.card` primitive, so adding an entry is copying a
+  sibling and changing the text. The timeline connector and the filled first marker are CSS, with
+  no per-item classes to keep in sync.
+- **Colours** live in the `:root` and `[data-theme='light']` token blocks at the top of
+  `css/style.css`. Changing `--accent` in both re-themes the whole site.
+- **Résumé**: replace `resume.pdf` at the repository root. The filename is lower-case and
+  referenced that way in two places; GitHub Pages is case-sensitive even though Windows is not.
 
-1. Fork the repository
-2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## License
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
-## 📞 Contact
-
-Varad Paradkar - [vparadka@charlotte.edu](mailto:vparadka@charlotte.edu)
-
-Project Link: [https://github.com/vradcar/portfolio-website](https://github.com/vradcar/portfolio-website)
-
-
-
-
+MIT — see [LICENSE](LICENSE).

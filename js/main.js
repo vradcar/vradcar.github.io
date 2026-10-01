@@ -1,336 +1,288 @@
-// Force dark theme immediately when script loads
-(function() {
-    const navbar = document.querySelector('.navbar');
-    if (navbar) {
-        navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
+/* ==========================================================================
+   Varad Paradkar — portfolio behaviour
+   No dependencies, no build step. Everything here is progressive: the page
+   is complete and readable with this file blocked.
+   ========================================================================== */
+
+(function () {
+  'use strict';
+
+  const $  = (sel, root = document) => root.querySelector(sel);
+  const $$ = (sel, root = document) => Array.from(root.querySelectorAll(sel));
+
+  const reduceMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* --- Theme --------------------------------------------------------------
+     The initial theme is applied by an inline script in <head> to avoid a
+     flash; this only handles switching and persistence.                    */
+  const themeToggle = $('#themeToggle');
+
+  const setTheme = (theme) => {
+    document.documentElement.dataset.theme = theme;
+    if (themeToggle) {
+      themeToggle.setAttribute(
+        'aria-label',
+        theme === 'dark' ? 'Switch to light theme' : 'Switch to dark theme'
+      );
     }
-})();
+    try { localStorage.setItem('theme', theme); } catch (e) { /* storage blocked */ }
+  };
 
-document.addEventListener('DOMContentLoaded', function() {
-    const navbar = document.querySelector('.navbar');
-    
-    // Force dark theme
-    navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
-    
-    // Handle scroll
-    window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-            navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.98)';
-            navbar.classList.add('scrolled');
-        } else {
-            navbar.style.backgroundColor = 'rgba(18, 18, 18, 0.95)';
-            navbar.classList.remove('scrolled');
-        }
+  setTheme(document.documentElement.dataset.theme === 'light' ? 'light' : 'dark');
+
+  if (themeToggle) {
+    themeToggle.addEventListener('click', () => {
+      setTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark');
+    });
+  }
+
+  // Follow the OS only while the visitor hasn't made an explicit choice.
+  matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
+    let stored = null;
+    try { stored = localStorage.getItem('theme'); } catch (err) { /* ignore */ }
+    if (!stored) setTheme(e.matches ? 'light' : 'dark');
+  });
+
+  /* --- Header state + scroll progress ------------------------------------ */
+  const header   = $('#siteHeader');
+  const progress = $('#scrollProgress');
+  let scrollQueued = false;
+
+  const onScroll = () => {
+    const y = window.scrollY;
+    if (header) header.classList.toggle('is-stuck', y > 8);
+
+    if (progress) {
+      const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+      progress.style.width = scrollable > 0 ? `${(y / scrollable) * 100}%` : '0%';
+    }
+    scrollQueued = false;
+  };
+
+  window.addEventListener('scroll', () => {
+    if (!scrollQueued) {
+      scrollQueued = true;
+      requestAnimationFrame(onScroll);
+    }
+  }, { passive: true });
+
+  onScroll();
+
+  /* --- Mobile menu ------------------------------------------------------- */
+  const menuToggle = $('#menuToggle');
+  const nav        = $('.site-nav');
+
+  const closeMenu = () => {
+    if (!menuToggle || !nav) return;
+    nav.classList.remove('is-open');
+    menuToggle.setAttribute('aria-expanded', 'false');
+    menuToggle.setAttribute('aria-label', 'Open menu');
+  };
+
+  if (menuToggle && nav) {
+    menuToggle.addEventListener('click', () => {
+      const open = menuToggle.getAttribute('aria-expanded') !== 'true';
+      nav.classList.toggle('is-open', open);
+      menuToggle.setAttribute('aria-expanded', String(open));
+      menuToggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
     });
 
-    // Add scroll progress indicator with dark theme colors
-    const progressBar = document.createElement('div');
-    progressBar.className = 'scroll-progress';
-    document.body.appendChild(progressBar);
+    $$('.nav-list a').forEach((link) => link.addEventListener('click', closeMenu));
 
-    window.addEventListener('scroll', () => {
-        const scrollPercent = (window.scrollY / (document.documentElement.scrollHeight - window.innerHeight)) * 100;
-        progressBar.style.width = `${scrollPercent}%`;
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && nav.classList.contains('is-open')) {
+        closeMenu();
+        menuToggle.focus();
+      }
     });
 
-    // Add mobile menu toggle
-    const menuButton = document.createElement('button');
-    menuButton.className = 'menu-toggle';
-    menuButton.innerHTML = '<i class="fas fa-bars"></i>';
-    document.querySelector('.nav-content').appendChild(menuButton);
-
-    const navLinks = document.querySelector('.nav-links');
-    
-    // Add animation delay to nav items
-    const navItems = navLinks.querySelectorAll('li');
-    navItems.forEach((item, index) => {
-        item.style.transitionDelay = `${index * 0.1}s`;
-    });
-
-    // Toggle menu
-    menuButton.addEventListener('click', (e) => {
-        e.stopPropagation();
-        navLinks.classList.toggle('active');
-        const icon = menuButton.querySelector('i');
-        icon.classList.toggle('fa-bars');
-        icon.classList.toggle('fa-times');
-        
-        // Toggle body scroll
-        document.body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
-    });
-
-    // Close menu when clicking a link
-    navLinks.querySelectorAll('a').forEach(link => {
-        link.addEventListener('click', () => {
-            navLinks.classList.remove('active');
-            const icon = menuButton.querySelector('i');
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
-            document.body.style.overflow = '';
-        });
-    });
-
-    // Close menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (!e.target.closest('.nav-links') && 
-            !e.target.closest('.menu-toggle') && 
-            navLinks.classList.contains('active')) {
-            navLinks.classList.remove('active');
-            const icon = menuButton.querySelector('i');
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
-            document.body.style.overflow = '';
-        }
+      if (nav.classList.contains('is-open') &&
+          !e.target.closest('.site-nav') &&
+          !e.target.closest('#menuToggle')) {
+        closeMenu();
+      }
     });
 
-    // Prevent menu from staying open on window resize
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768 && navLinks.classList.contains('active')) {
-            navLinks.classList.remove('active');
-            const icon = menuButton.querySelector('i');
-            icon.classList.add('fa-bars');
-            icon.classList.remove('fa-times');
-        }
+    // A resize past the breakpoint leaves the menu stuck open otherwise.
+    matchMedia('(min-width: 801px)').addEventListener('change', (e) => {
+      if (e.matches) closeMenu();
     });
+  }
 
-    // Intersection Observer for section animations
-    const observerOptions = {
-        threshold: 0.1,
-        rootMargin: '0px 0px -50px 0px'
-    };
+  /* --- Scroll reveal ----------------------------------------------------- */
+  if (!reduceMotion && 'IntersectionObserver' in window) {
+    const targets = $$('.section-head, .card, .stat-strip, .timeline .tl-item');
+    targets.forEach((el) => el.classList.add('reveal'));
 
-    const observer = new IntersectionObserver((entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('visible');
-            }
-        });
-    }, observerOptions);
+    const revealer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('is-visible');
+        revealer.unobserve(entry.target);
+      });
+    }, { threshold: 0.08, rootMargin: '0px 0px -40px 0px' });
 
-    document.querySelectorAll('section').forEach(section => {
-        observer.observe(section);
-    });
+    targets.forEach((el) => revealer.observe(el));
+  }
 
-    // Add smooth scroll behavior
-    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-        anchor.addEventListener('click', function (e) {
-            e.preventDefault();
-            document.querySelector(this.getAttribute('href')).scrollIntoView({
-                behavior: 'smooth'
-            });
-        });
-    });
+  /* --- Nav scrollspy ----------------------------------------------------- */
+  const navLinks = new Map();
+  $$('.nav-list a[href^="#"]').forEach((link) => {
+    const section = document.getElementById(link.hash.slice(1));
+    if (section) navLinks.set(section, link);
+  });
 
-    // Add smooth reveal animations
-    const revealElements = document.querySelectorAll('.project-card, .experience-card, .skill-category');
+  if (navLinks.size && 'IntersectionObserver' in window) {
+    const spy = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        const link = navLinks.get(entry.target);
+        if (!link) return;
+        if (entry.isIntersecting) link.setAttribute('aria-current', 'true');
+        else link.removeAttribute('aria-current');
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
 
-    const revealOptions = {
-        threshold: 0.15,
-        rootMargin: '0px'
-    };
+    navLinks.forEach((_link, section) => spy.observe(section));
+  }
 
-    const revealCallback = (entries) => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add('revealed');
-                // Add stagger effect for child elements
-                const children = entry.target.children;
-                Array.from(children).forEach((child, index) => {
-                    child.style.transitionDelay = `${index * 0.1}s`;
-                    child.classList.add('revealed');
-                });
-            }
-        });
-    };
+  /* --- Footer year ------------------------------------------------------- */
+  const year = $('#year');
+  if (year) year.textContent = String(new Date().getFullYear());
 
-    const revealObserver = new IntersectionObserver(revealCallback, revealOptions);
-    revealElements.forEach(element => revealObserver.observe(element));
+  /* --- GitHub repositories ----------------------------------------------
+     Best-effort enrichment. The section stays hidden unless the request
+     succeeds, so a rate-limited or offline visitor sees no broken shell.  */
+  const GH_USER     = 'vradcar';
+  const GH_CACHE_KEY = 'gh-repos-v1';
+  const GH_CACHE_TTL = 6 * 60 * 60 * 1000; // 6 hours
+  const GH_LIMIT     = 6;
 
-    // Add animation for timeline items
-    document.addEventListener('DOMContentLoaded', () => {
-        const timelineItems = document.querySelectorAll('.timeline-item');
-        
-        const timelineObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry, index) => {
-                if (entry.isIntersecting) {
-                    entry.target.style.animationDelay = `${index * 0.2}s`;
-                    entry.target.style.animationPlayState = 'running';
-                }
-            });
-        }, { threshold: 0.2 });
+  // An undescribed or scratch repository reads worse than no repository at all,
+  // so the section only appears once enough repos carry a real description.
+  const GH_MIN = 3;
 
-        timelineItems.forEach(item => {
-            timelineObserver.observe(item);
-        });
+  // Already covered in depth by the hand-written cards above.
+  const GH_SKIP = new Set(['vradcar', 'vradcar.github.io', 'git-home-portfolio']);
 
-        // Add hover effect for skill categories
-        const skillCategories = document.querySelectorAll('.skill-category');
-        
-        skillCategories.forEach(category => {
-            category.addEventListener('mouseenter', () => {
-                const tags = category.querySelectorAll('.skill-tag');
-                tags.forEach((tag, index) => {
-                    tag.style.transitionDelay = `${index * 0.05}s`;
-                    tag.style.transform = 'scale(1.05)';
-                });
-            });
+  const icon = (id) => {
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('class', 'ico');
+    svg.setAttribute('aria-hidden', 'true');
+    const use = document.createElementNS('http://www.w3.org/2000/svg', 'use');
+    use.setAttribute('href', `#i-${id}`);
+    svg.appendChild(use);
+    return svg;
+  };
 
-            category.addEventListener('mouseleave', () => {
-                const tags = category.querySelectorAll('.skill-tag');
-                tags.forEach(tag => {
-                    tag.style.transitionDelay = '0s';
-                    tag.style.transform = 'scale(1)';
-                });
-            });
-        });
-    });
+  const el = (tag, className, text) => {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  };
 
-    // Call fetchGitHubProjects when the DOM is loaded
-    fetchGitHubProjects();
-});
+  function buildRepoCard(repo) {
+    const card = el('article', 'card project-card');
+    card.appendChild(el('h4', null, repo.name));
+    card.appendChild(el('p', null, repo.description));
 
-// Move these functions outside of any event listener
-async function fetchGitHubProjects() {
-    try {
-        const username = 'vradcar';
-        const headers = {
-            'Accept': 'application/vnd.github.v3+json',
-        };
-        
-        const response = await fetch(`https://api.github.com/users/${username}/repos`, {
-            headers: headers
-        });
-        
-        if (!response.ok) {
-            throw new Error(`GitHub API returned ${response.status}: ${response.statusText}`);
-        }
+    const meta = el('div', 'gh-meta');
+    if (repo.language) meta.appendChild(el('span', 'gh-lang', repo.language));
 
-        const repos = await response.json();
-        
-        // Sort all repos by latest update
-        const filteredRepos = repos
-            .sort((a, b) => new Date(b.updated_at) - new Date(a.updated_at))
-            .slice(0, 6); // Show latest 6 repos
+    const stars = el('span');
+    stars.append(icon('star'), document.createTextNode(String(repo.stargazers_count)));
+    meta.appendChild(stars);
 
-        if (filteredRepos.length === 0) {
-            throw new Error('No matching GitHub projects found');
-        }
+    const forks = el('span');
+    forks.append(icon('fork'), document.createTextNode(String(repo.forks_count)));
+    meta.appendChild(forks);
 
-        const projectsContainer = document.querySelector('.project-grid');
-        if (!projectsContainer) {
-            throw new Error('Project grid not found');
-        }
+    card.appendChild(meta);
 
-        // Remove existing GitHub section if it exists
-        const existingGithubSection = document.querySelector('.github-projects-section');
-        if (existingGithubSection) {
-            existingGithubSection.remove();
-        }
-
-        // Create container for GitHub section
-        const githubSection = document.createElement('div');
-        githubSection.className = 'github-projects-section';
-
-        const githubTitle = document.createElement('h2');
-        githubTitle.className = 'github-projects-title';
-        githubTitle.textContent = 'Latest GitHub Projects';
-
-        const githubContainer = document.createElement('div');
-        githubContainer.className = 'project-grid github-projects';
-        
-        filteredRepos.forEach(repo => {
-            const card = createGitHubProjectCard(repo);
-            githubContainer.appendChild(card);
-        });
-
-        // Create button container for centering
-        const buttonContainer = document.createElement('div');
-        buttonContainer.className = 'view-all-button-container';
-
-        const viewAllButton = document.createElement('a');
-        viewAllButton.href = `https://github.com/${username}?tab=repositories`;
-        viewAllButton.target = '_blank';
-        viewAllButton.className = 'view-all-button';
-        viewAllButton.textContent = 'View All Projects';
-
-        buttonContainer.appendChild(viewAllButton);
-
-        githubSection.appendChild(githubTitle);
-        githubSection.appendChild(githubContainer);
-        githubSection.appendChild(buttonContainer);
-        projectsContainer.parentElement.insertBefore(githubSection, projectsContainer.nextSibling);
-
-    } catch (error) {
-        console.error('GitHub projects error:', error.message);
+    const topics = (repo.topics || []).slice(0, 5);
+    if (topics.length) {
+      const tags = el('ul', 'tags tags-sm');
+      topics.forEach((topic) => tags.appendChild(el('li', null, topic)));
+      card.appendChild(tags);
     }
-}
 
-function createGitHubProjectCard(repo) {
-    const card = document.createElement('div');
-    card.className = 'project-card github-card';
-    
-    // Convert topics/languages to tech stack
-    const techStack = repo.topics || [];
-    if (repo.language) techStack.unshift(repo.language);
+    const links = el('p', 'card-links');
+    const code = el('a');
+    code.href = repo.html_url;
+    code.target = '_blank';
+    code.rel = 'noopener';
+    code.append(icon('github'), document.createTextNode('Code'));
+    links.appendChild(code);
 
-    // Use a default description if none is provided
-    const description = repo.description || 'No description available';
+    if (repo.homepage) {
+      const demo = el('a');
+      demo.href = repo.homepage;
+      demo.target = '_blank';
+      demo.rel = 'noopener';
+      demo.append(icon('external'), document.createTextNode('Live'));
+      links.appendChild(demo);
+    }
 
-    card.innerHTML = `
-        <h3>${repo.name}</h3>
-        <p>${description}</p>
-        <div class="tech-stack">
-            ${techStack.map(tech => `<span class="tech-tag">${tech}</span>`).join('')}
-        </div>
-        <div class="project-stats">
-            <span><i class="fas fa-star"></i> ${repo.stargazers_count}</span>
-            <span><i class="fas fa-code-branch"></i> ${repo.forks_count}</span>
-        </div>
-        <div class="project-links">
-            <a href="${repo.html_url}" target="_blank">
-                <i class="fab fa-github"></i> View Code
-            </a>
-            ${repo.homepage ? `
-                <a href="${repo.homepage}" target="_blank">
-                    <i class="fas fa-external-link-alt"></i> Live Demo
-                </a>
-            ` : ''}
-        </div>
-    `;
-    
+    card.appendChild(links);
     return card;
-}
+  }
 
-// Optional: Add this function to show fallback projects when API fails
-function addFallbackProjects() {
-    const projectsContainer = document.querySelector('.project-grid');
-    if (!projectsContainer) return;
+  function renderRepos(repos) {
+    const section = $('#githubSection');
+    const grid    = $('#githubGrid');
+    if (!section || !grid || repos.length < GH_MIN) return;
 
-    const fallbackProjects = [
-        {
-            name: "Portfolio Website",
-            description: "Personal portfolio website built with modern web technologies",
-            language: "JavaScript",
-            topics: ["HTML", "CSS", "JavaScript"],
-            html_url: "https://github.com/vradcar/vradcar.github.io"
-        }
-        // Add more fallback projects as needed
-    ];
+    grid.replaceChildren(...repos.map(buildRepoCard));
+    section.hidden = false;
+  }
 
-    const githubContainer = document.createElement('div');
-    githubContainer.className = 'project-grid github-projects';
-    
-    fallbackProjects.forEach(repo => {
-        const card = createGitHubProjectCard(repo);
-        githubContainer.appendChild(card);
-    });
+  function pickRepos(repos) {
+    return repos
+      .filter((r) => !r.fork && !r.archived && !GH_SKIP.has(r.name.toLowerCase()))
+      .filter((r) => r.description && r.description.trim())
+      .sort((a, b) => new Date(b.pushed_at) - new Date(a.pushed_at))
+      .slice(0, GH_LIMIT)
+      .map(({ name, description, language, topics, html_url, homepage,
+              stargazers_count, forks_count, pushed_at }) => ({
+        name, description, language, topics, html_url, homepage,
+        stargazers_count, forks_count, pushed_at
+      }));
+  }
 
-    projectsContainer.parentElement.appendChild(githubContainer);
-}
+  function readCache() {
+    try {
+      const raw = localStorage.getItem(GH_CACHE_KEY);
+      if (!raw) return null;
+      const { at, repos } = JSON.parse(raw);
+      return Date.now() - at < GH_CACHE_TTL ? repos : null;
+    } catch (e) {
+      return null;
+    }
+  }
 
+  async function loadRepos() {
+    const cached = readCache();
+    if (cached) { renderRepos(cached); return; }
 
+    try {
+      const res = await fetch(
+        `https://api.github.com/users/${GH_USER}/repos?per_page=100&sort=pushed`,
+        { headers: { Accept: 'application/vnd.github+json' } }
+      );
+      if (!res.ok) throw new Error(`GitHub API ${res.status}`);
 
+      const repos = pickRepos(await res.json());
+      renderRepos(repos);
 
+      try {
+        localStorage.setItem(GH_CACHE_KEY, JSON.stringify({ at: Date.now(), repos }));
+      } catch (e) { /* storage full or blocked — the render already happened */ }
+    } catch (err) {
+      // Nothing to show: the section stays hidden rather than rendering an error.
+      console.warn('Could not load GitHub repositories:', err.message);
+    }
+  }
 
-
-
+  loadRepos();
+})();
